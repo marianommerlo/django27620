@@ -1,0 +1,30 @@
+{% extends "AppCoder/padre.html" %}
+
+{% load static %}
+
+{% block contenidoQueCambia %}
+
+{% if formulario.errors %}
+
+<p style="color: red">Hay un error en los datos</p>
+
+
+{% endif %}
+
+<form action= "{% url 'cursos' %}" method="POST">{% csrf_token %}
+
+    <table>
+        {{formulario.as_table}}
+    </table>
+    <input type="submit" value="ENVIAR FORMULARIO HECHO EN API">
+
+</form>
+
+{% endblock %}
+
+        
+{% block título %}
+
+<h1>¡CURSOS!</h1>
+
+{% endblock %}

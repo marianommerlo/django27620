@@ -6,6 +6,9 @@ class Curso(models.Model):#curso hereda de Model
     nombre= models.CharField(max_length=50)
     comision= models.IntegerField()
 
+    def __str__(self):
+        return self.nombre +" "+ str(self.comision)
+
 class Estudiante(models.Model):
     nombre= models.CharField(max_length=50)
     apellido= models.CharField(max_length=50)
@@ -20,4 +23,4 @@ class Profesor(models.Model):
 class Entregable(models.Model):
     nombre= models.CharField(max_length=50)
     fecha_entrega= models.DateField()
-    entregado= models.BooleanField
+    entregado= models.BooleanField(default=False, blank=True)
