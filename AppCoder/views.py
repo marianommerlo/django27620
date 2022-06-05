@@ -3,9 +3,14 @@ from http.client import HTTPResponse
 from django.shortcuts import render
 from .models import Curso, Estudiante, Profesor, Entregable
 from django.http import HttpResponse
-from AppCoder.forms import CursoFormulario, ProfeFormulario
+from AppCoder.forms import CursoFormulario, ProfeFormulario, UserRegistrationForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 def curso(self):
@@ -29,6 +34,7 @@ def estudiantes(request):
 def entregables(request):
     return render(request, 'AppCoder/entregables.html')
 
+@login_required
 def cursos(request):
     
     if request.method == 'POST':
@@ -67,14 +73,14 @@ def buscar(request):
 
     return render(request, 'AppCoder/cursosFormulario.html')
 
-
+@login_required
 def leerProfesores(request):
     profesores= Profesor.objects.all()
     contexto= {'profesores': profesores}
     
     return render(request, 'AppCoder/profesores.html', contexto)
 
-
+@login_required
 def eliminarProfesor(request, nombre):
     profesor= Profesor.objects.get(nombre= nombre)
     profesor.delete()
@@ -111,15 +117,16 @@ def editarProfesor(request, nombre):
 
 #CRUD DE ESTUDIANTES EN VISTAS-----------------------------------------------------------------
 
-class EstudiantesList(ListView):
+class EstudiantesList(LoginRequiredMixin, ListView):
     model= Estudiante
     template_name= 'AppCoder/estudiantes.html'
 
-class EstudianteDetalle(DetailView):
+
+class EstudianteDetalle(LoginRequiredMixin, DetailView):
     model= Estudiante
     template_name= 'AppCoder/estudiante_detalle.html'
 
-class EstudianteCreacion(CreateView):
+class EstudianteCreacion(CreateView): #esta view no funciona
     model= Estudiante
     success_url= reverse_lazy('estudiante_listar')
     fields= ['nombre', 'apellido', 'email']
@@ -134,4 +141,47 @@ class EstudianteEliminacion(DeleteView):
     success_url= reverse_lazy('estudiante_listar')
     fields= ['nombre', 'apellido', 'email']
 
-#---------------------------------------------------------------------------------------------------------------
+#LOGIN-------------------------------------------------------------------------------------------------------
+
+def login_request(request):
+
+    if request.method == "POST":
+        formulario= AuthenticationForm(request, data= request.POST)
+
+        if formulario.is_valid():
+            usuario= formulario.cleaned_data.get('username')
+            clave= formulario.cleaned_data.get('password')
+
+            user= authenticate(username= usuario, password= clave)
+            
+            if user is not None:
+                login(request, user)
+                return render(request, 'AppCoder/inicio.html', {'mensaje': f'Bienvenido al Sistema {usuario}'})
+
+            else:
+                return render(request, 'AppCoder/login.html', {'formulario': formulario, 'mensaje': 'Usuario incorrecto, vuelva a loguearse'})
+        
+        else:
+            return render(request, 'AppCoder/login.html', {'formulario': formulario, 'mensaje': 'Formulario inválido, vuelva a loguearse'})
+    
+    else:
+        formulario= AuthenticationForm()
+        return render(request, 'AppCoder/login.html', {'formulario': formulario})
+
+
+def register(request):
+    if request.method == 'POST':
+        formulario = UserRegistrationForm(request.POST)
+        if formulario.is_valid():
+            username = formulario.cleaned_data.get('username')
+            formulario.save()
+
+            return render(request, 'AppCoder/inicio.html', {'mensaje': f'Usuario {username} creado satisfactoriamente'})
+
+        else:
+            return render(request, 'AppCoder/inicio.html', {'mensaje': 'No se pudo crear el usuario'})
+
+    else:
+        formulario= UserRegistrationForm()
+        return render(request, 'AppCoder/register.html', {'formulario': formulario})
+

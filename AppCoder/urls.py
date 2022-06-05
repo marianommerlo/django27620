@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import * #importa todo lo que hay adentro
+from .views import *
+from django.contrib.auth.views import LogoutView #importa todo lo que hay adentro
 
 urlpatterns = [
     path('', inicio, name= 'inicio'),
     path('profesores/', leerProfesores, name= 'profesores'),
-    path('estudiantes/', estudiantes, name= 'estudiantes'),
+    #path('estudiantes/', estudiantes, name= 'estudiantes'),
     path('cursos/', cursos, name= 'cursos'),
     path('entregables/', entregables, name= 'entregables'),
     #path('cursosFormulario/', cursosFormulario, name= 'cursosFormulario'),
@@ -19,5 +20,9 @@ urlpatterns = [
     path('estudiante/nuevo/', EstudianteCreacion.as_view(), name= 'estudiante_crear'),
     path('estudiante/editar/<pk>/', EstudianteEdicion.as_view(), name= 'estudiante_editar'),
     path('estudiante/borrar/<pk>/', EstudianteEliminacion.as_view(), name= 'estudiante_borrar'),
+    #Login/Register/Logout
+    path('login/', login_request, name= 'login'),
+    path('register/', register, name= 'register'),
+    path('logout/', LogoutView.as_view(template_name= "AppCoder/logout.html"), name= 'logout'),
 
 ]

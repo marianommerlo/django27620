@@ -1,0 +1,21 @@
+{% extends "AppCoder/padre.html" %}
+
+{% load static %}
+
+{% block contenidoQueCambia %}
+
+<form method= "POST">{% csrf_token %}
+
+    {{formulario.as_p}}
+    <button type="submit">REGISTRO</button>
+
+</form>
+
+    
+{% endblock %}
+    
+{% block título %}
+
+    <H1>REGISTRO DE USUARIO</H1>
+
+{% endblock %}
