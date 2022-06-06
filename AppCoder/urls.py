@@ -17,7 +17,7 @@ urlpatterns = [
     #pk es el id de django
     path('estudiante/list/', EstudiantesList.as_view(), name= 'estudiante_listar'),
     path('estudiante/<pk>/', EstudianteDetalle.as_view(), name= 'estudiante_detalle'),#pk es el id
-    path('estudiante/nuevo/', EstudianteCreacion.as_view(), name= 'estudiante_crear'),
+    path('estudiante/nuevo/1', EstudianteCreacion.as_view(), name= 'estudiante_crear'),
     path('estudiante/editar/<pk>/', EstudianteEdicion.as_view(), name= 'estudiante_editar'),
     path('estudiante/borrar/<pk>/', EstudianteEliminacion.as_view(), name= 'estudiante_borrar'),
     #Login/Register/Logout
