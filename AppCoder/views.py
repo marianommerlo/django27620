@@ -221,7 +221,7 @@ def agregarAvatar(request):
         if formulario.is_valid():
             avatarViejo= Avatar.objects.get(user= request.user)
 
-            if(avatarViejo.avatar):
+            if (avatarViejo.avatar):
                 avatarViejo.delete()
                 
             avatar= Avatar(user= user, avatar=formulario.cleaned_data['avatar'])
